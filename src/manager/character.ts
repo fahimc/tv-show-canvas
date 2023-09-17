@@ -1,3 +1,5 @@
+import { SceneManager } from "./scene-manager";
+
 export interface CharacterInterface {
   name: string;
   canvas: fabric.Canvas;
@@ -9,10 +11,12 @@ export interface CharacterInterface {
 export class Character {
   canvas: fabric.Canvas;
   name: string = "";
+  sceneManager: SceneManager;
   instance?: fabric.Object;
   left: number = 0;
-  constructor(canvas: fabric.Canvas) {
+  constructor(canvas: fabric.Canvas, sceneManager: SceneManager) {
     this.canvas = canvas;
+    this.sceneManager = sceneManager;
   }
   getImagePath() {}
   walk(targetX: number, duration: number) {
@@ -35,6 +39,7 @@ export class Character {
     let progress = Math.min(1, (now - startTime) / duration);
 
     this.instance?.set("left", startLeft + (targetX - startLeft) * progress);
+    this.sceneManager.cameraManager.follow(this.instance);
     this.canvas.renderAll();
 
     if (progress < 1) {

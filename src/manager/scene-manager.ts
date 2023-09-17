@@ -4,18 +4,29 @@ import { Camera } from "./camera";
 import { CameraManager } from "./camera-manager";
 import { Character } from "./character";
 import { CharacterManager } from "./character-manager";
+import { NarratorManager } from "./narrator-manager";
 import { Scene } from "./scene";
 import { fabric } from "fabric";
 
 export class SceneManager {
   private canvas: fabric.Canvas;
   private characterManager: CharacterManager;
-  private cameraManager: CameraManager;
+  public cameraManager: CameraManager;
   private scenes: Scene[] = [];
-  constructor(canvas: fabric.Canvas) {
+  private setText: (text: string) => void;
+  private narratorManager: NarratorManager;
+  constructor(
+    canvas: fabric.Canvas,
+    canvasElement: HTMLCanvasElement,
+    setText: (text: string) => void
+  ) {
     this.canvas = canvas;
+    (canvasElement as HTMLCanvasElement).width = window.innerWidth;
+    (canvasElement as HTMLCanvasElement).height = window.innerHeight;
     this.characterManager = new CharacterManager(canvas);
+    this.narratorManager = new NarratorManager();
     this.cameraManager = new CameraManager(canvas);
+    this.setText = setText;
   }
   addScene(scene: Scene) {
     this.scenes.push(scene);
@@ -27,14 +38,20 @@ export class SceneManager {
     this.cameraManager.addCamera(new Camera(1, 0, 0));
     this.cameraManager.addCamera(new Camera(1, 0, 0));
     this.addBackground(scene?.getBackgroundPath(), () => {
-      this.characterManager.addCharacter(new BobCharacter(this.canvas));
-      this.characterManager.addCharacter(new TodCharacter(this.canvas));
+      this.characterManager.addCharacter(new BobCharacter(this.canvas, this));
+      this.characterManager.addCharacter(new TodCharacter(this.canvas, this));
       const character1 = this.characterManager.getCharacter("bob");
       const character2 = this.characterManager.getCharacter("tod");
       console.log(character1?.getImagePath());
       if (character1) this.addCharacter(character1);
       if (character2) this.addCharacter(character2, 200);
       this.cameraManager.switchCamera(0);
+      //   document.addEventListener("click", () => {
+      //     this.narratorManager.speak(
+      //       " A quiet park, late afternoon. Birds can be heard chirping, and there’s a soft glow as the sun begins to set.",
+      //       () => {}
+      //     );
+      //   });
       setTimeout(() => {
         if (!character1 || !character2) return;
         character1.position(0.1 * window.innerWidth); // Bob starts on the far left.

@@ -44,6 +44,10 @@ export class CameraManager {
     }, 500);
   }
 
+  follow(targetObj: any, offsetX = 0, offsetY = 0) {
+    this.zoomIntoObject(targetObj);
+  }
+
   zoomIntoObject(obj: any, targetZoom = 2) {
     let objCenter = obj.getCenterPoint();
     let viewportCenter = new fabric.Point(

@@ -15,6 +15,7 @@ export class SceneManager {
   private scenes: Scene[] = [];
   private setText: (text: string) => void;
   private narratorManager: NarratorManager;
+  private stageInstance: fabric.Object | undefined;
   constructor(
     canvas: fabric.Canvas,
     canvasElement: HTMLCanvasElement,
@@ -37,7 +38,7 @@ export class SceneManager {
     if (!scene) return;
     this.cameraManager.addCamera(new Camera(1, 0, 0));
     this.cameraManager.addCamera(new Camera(1, 0, 0));
-    this.addBackground(scene?.getBackgroundPath(), () => {
+    scene?.generate(this.canvas, () => {
       this.characterManager.addCharacter(new BobCharacter(this.canvas, this));
       this.characterManager.addCharacter(new TodCharacter(this.canvas, this));
       const character1 = this.characterManager.getCharacter("bob");
@@ -79,28 +80,10 @@ export class SceneManager {
       }, 3000);
     });
   }
-  addBackground(imagePath: string, callback: () => void) {
-    const imageObj = new Image();
 
-    imageObj.onload = () => {
-      const imgInstance = new fabric.Image(imageObj, {
-        left: -300,
-        top: -300,
-        angle: 0,
-        opacity: 1,
-      });
-      imgInstance.width = window.innerWidth;
-      imgInstance.height = window.innerHeight;
-      imgInstance.scale(1.5);
-      this.canvas.add(imgInstance);
-      this.canvas.sendToBack(imgInstance);
-      callback();
-    };
-    imageObj.src = "scene/" + imagePath;
-  }
   addCharacter(character: Character, left?: number) {
     const imageObj = new Image();
-
+    if (character.instance) return;
     imageObj.onload = () => {
       const imgInstance = new fabric.Image(imageObj, {
         left: left || 0,

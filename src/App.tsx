@@ -5,6 +5,7 @@ import { SceneManager } from "./manager/scene-manager";
 import { LivingRoomScene } from "./show/scene/living-room-scene";
 import { CharacterManager } from "./manager/character-manager";
 import { fabric } from "fabric";
+import { OutsideScene } from "./show/scene/outside-scene";
 
 function App() {
   const canvasRef = useRef(null);
@@ -24,7 +25,8 @@ function App() {
       const sceneManager = new SceneManager(canvas, canvasElement, setText);
 
       sceneManager.addScene(new LivingRoomScene());
-      sceneManager.setScene("living-room");
+      sceneManager.addScene(new OutsideScene());
+      sceneManager.setScene("outside");
     }
   }, []);
   return (

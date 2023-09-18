@@ -12,6 +12,7 @@ canvas {
   width: 80vw;
   left: 10vw;
   right: auto;
+  bottom: 10vh;
   text-align: center;
   background: black;
   color: white;
